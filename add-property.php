@@ -2,15 +2,8 @@
 session_start();
 include('db.php');  // Include the database connection
 
-// if (!isset($_SESSION['user_id'])) {
-//     die('You must be logged in to add a property.');
-// }
-
 // Temporary: Set a default user ID for testing
 $_SESSION['user_id'] = 1; // Replace 1 with an appropriate user ID from your database
-
-
-
 
 // Handle form submission to add a property
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -27,21 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $proximity_facilities = $_POST['proximity_facilities'];
     $proximity_roads = $_POST['proximity_roads'];
 
-    // Handle image upload
-    $image_url = null;
-    if (isset($_FILES['image']['name']) && $_FILES['image']['name'] != '') {
-        $image_dir = 'uploads/';
-        $image_name = basename($_FILES['image']['name']);
-        $image_path = $image_dir . $image_name;
-        
-        // Move the uploaded file to the server
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $image_path)) {
-            $image_url = $image_path;  // Save the image URL
-        } else {
-            echo "Failed to upload image.";
-            exit;
-        }
-    }
+    // Get image URL from input
+    $image_url = isset($_POST['image_url']) ? $_POST['image_url'] : null;
 
     // Calculate the property tax (7% of price)
     $property_tax = $price * 0.07;
@@ -65,12 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Property</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="addProperty.css">
 </head>
 <body>
     <div class="container">
         <h1>Add New Property</h1>
-        <form action="add-property.php" method="POST" enctype="multipart/form-data">
+        <form action="add-property.php" method="POST">
             <div>
                 <label for="location">Location:</label>
                 <input type="text" id="location" name="location" required>
@@ -112,11 +92,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <textarea id="proximity_roads" name="proximity_roads" required></textarea>
             </div>
             <div>
-                <label for="image">Property Image:</label>
-                <input type="file" id="image" name="image" accept="image/*">
+                <label for="image_url">Image URL:</label>
+                <input type="text" id="image_url" name="image_url" placeholder="Enter the image URL">
+                <img id="image-preview" style="display:none; max-width: 100px; margin-top: 10px;" alt="Image Preview">
             </div>
             <button type="submit">Add Property</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageUrlInput = document.getElementById('image_url');
+            const imagePreview = document.getElementById('image-preview');
+
+            // Show image preview when the user enters an image URL
+            imageUrlInput.addEventListener('input', function () {
+                const url = imageUrlInput.value;
+                if (url) {
+                    imagePreview.src = url;
+                    imagePreview.style.display = 'block'; // Show the image preview
+                } else {
+                    imagePreview.style.display = 'none'; // Hide the image preview if no URL
+                }
+            });
+        });
+    </script>
 </body>
 </html>
