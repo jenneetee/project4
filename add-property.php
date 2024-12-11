@@ -2,10 +2,15 @@
 session_start();
 include('db.php');  // Include the database connection
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    die('You must be logged in to add a property.');
-}
+// if (!isset($_SESSION['user_id'])) {
+//     die('You must be logged in to add a property.');
+// }
+
+// Temporary: Set a default user ID for testing
+$_SESSION['user_id'] = 1; // Replace 1 with an appropriate user ID from your database
+
+
+
 
 // Handle form submission to add a property
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
