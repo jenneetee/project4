@@ -20,8 +20,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $proximity_facilities = $_POST['proximity_facilities'];
     $proximity_roads = $_POST['proximity_roads'];
 
-    // Get image URL from input
-    $image_url = isset($_POST['image_url']) ? $_POST['image_url'] : null;
+    // Handle image upload
+    $image_url = null;
+    if (isset($_FILES['property_image']) && $_FILES['property_image']['error'] === UPLOAD_ERR_OK) {
+        // Ensure the file is an image
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+        $image_extension = pathinfo($_FILES['property_image']['name'], PATHINFO_EXTENSION);
+        
+        if (in_array(strtolower($image_extension), $allowed_extensions)) {
+            // Generate a unique name for the image to avoid overwriting
+            $image_name = uniqid() . '.' . $image_extension;
+            $image_path = 'uploads/' . $image_name;
+
+            // Move the uploaded image to the uploads directory
+            if (move_uploaded_file($_FILES['property_image']['tmp_name'], $image_path)) {
+                $image_url = $image_path;  // Save the path to the database
+            }
+        } else {
+            echo "Invalid image type. Allowed types are: jpg, jpeg, png, gif.";
+        }
+    }
 
     // Calculate the property tax (7% of price)
     $property_tax = $price * 0.07;
@@ -50,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Add New Property</h1>
-        <form action="add-property.php" method="POST">
+        <form action="add-property.php" method="POST" enctype="multipart/form-data">
             <div>
                 <label for="location">Location:</label>
                 <input type="text" id="location" name="location" required>
@@ -84,38 +102,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="checkbox" id="parking" name="parking">
             </div>
             <div>
-                <label for="proximity_facilities">Proximity to Facilities:</label>
+                <label for="proximity_facilities">Features:</label>
                 <textarea id="proximity_facilities" name="proximity_facilities" required></textarea>
             </div>
             <div>
-                <label for="proximity_roads">Proximity to Roads:</label>
+                <label for="proximity_roads">Description:</label>
                 <textarea id="proximity_roads" name="proximity_roads" required></textarea>
             </div>
             <div>
-                <label for="image_url">Image URL:</label>
-                <input type="text" id="image_url" name="image_url" placeholder="Enter the image URL">
-                <img id="image-preview" style="display:none; max-width: 100px; margin-top: 10px;" alt="Image Preview">
+                <label for="property_image">Image:</label>
+                <input type="file" id="property_image" name="property_image" accept="image/*">
             </div>
             <button type="submit">Add Property</button>
         </form>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const imageUrlInput = document.getElementById('image_url');
-            const imagePreview = document.getElementById('image-preview');
-
-            // Show image preview when the user enters an image URL
-            imageUrlInput.addEventListener('input', function () {
-                const url = imageUrlInput.value;
-                if (url) {
-                    imagePreview.src = url;
-                    imagePreview.style.display = 'block'; // Show the image preview
-                } else {
-                    imagePreview.style.display = 'none'; // Hide the image preview if no URL
-                }
-            });
-        });
-    </script>
 </body>
 </html>

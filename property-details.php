@@ -49,8 +49,8 @@ if (isset($_GET['id'])) {
             <p><strong>Square Footage:</strong> <?php echo $property['square_footage']; ?> sq ft</p>
             <p><strong>Garden:</strong> <?php echo $property['garden'] ? 'Yes' : 'No'; ?></p>
             <p><strong>Parking:</strong> <?php echo $property['parking'] ? 'Yes' : 'No'; ?></p>
-            <p><strong>Proximity to Facilities:</strong> <?php echo nl2br(htmlspecialchars($property['proximity_facilities'])); ?></p>
-            <p><strong>Proximity to Roads:</strong> <?php echo nl2br(htmlspecialchars($property['proximity_roads'])); ?></p>
+            <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($property['proximity_facilities'])); ?></p>
+            <p><strong>Features:</strong> <?php echo nl2br(htmlspecialchars($property['proximity_roads'])); ?></p>
 
             <!-- Edit and Delete buttons -->
             <div class="buttons">

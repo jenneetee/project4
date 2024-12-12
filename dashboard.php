@@ -43,8 +43,9 @@ $result = $stmt->get_result();
                     echo '<p>Bedrooms: ' . $property['bedrooms'] . '</p>';
                     echo '<p>Bathrooms: ' . $property['bathrooms'] . '</p>';
                     
+                    // Display the uploaded image or a placeholder if no image is available
                     if (!empty($property['image_url'])) {
-                        echo '<img src="' . htmlspecialchars($property['image_url']) . '" alt="Property Image" style="width:100px; height:auto;">';
+                        echo '<img src="' . htmlspecialchars($property['image_url']) . '" alt="Property Image" style="width:100%; height:auto; max-width:300px;">';
                     } else {
                         echo '<p>No image available.</p>';
                     }

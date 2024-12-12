@@ -32,16 +32,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $parking = isset($_POST['parking']) ? 1 : 0;
     $proximity_facilities = $_POST['proximity_facilities'];
     $proximity_roads = $_POST['proximity_roads'];
-    $image_url = $_POST['image_url'];  // Image URL instead of upload
+
+    // Handle image upload (if a new image is provided)
+    $image_url = $property['image_url'];  // Keep the old image by default
+
+    if (isset($_FILES['property_image']) && $_FILES['property_image']['error'] === 0) {
+        $image_url = 'uploads/' . basename($_FILES['property_image']['name']);
+        if (!move_uploaded_file($_FILES['property_image']['tmp_name'], $image_url)) {
+            die("Failed to move uploaded file.");
+        }
+    }
 
     // Update the property in the database
     $query = "UPDATE properties SET location = ?, price = ?, age = ?, square_footage = ?, bedrooms = ?, bathrooms = ?, garden = ?, parking = ?, proximity_facilities = ?, proximity_roads = ?, image_url = ? WHERE id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('siiiiiisssdi', $location, $price, $age, $square_footage, $bedrooms, $bathrooms, $garden, $parking, $proximity_facilities, $proximity_roads, $image_url, $property_id);
+    $stmt->bind_param('siiiiiissssd', $location, $price, $age, $square_footage, $bedrooms, $bathrooms, $garden, $parking, $proximity_facilities, $proximity_roads, $image_url, $property_id);
     $stmt->execute();
     header('Location: dashboard.php');  // Redirect to the dashboard after updating
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -55,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Edit Property</h1>
-        <form action="edit-property.php?id=<?php echo $property_id; ?>" method="POST">
+        <form action="edit-property.php?id=<?php echo $property_id; ?>" method="POST" enctype="multipart/form-data">
             <div>
                 <label for="location">Location:</label>
                 <input type="text" id="location" name="location" value="<?php echo htmlspecialchars($property['location']); ?>" required>
@@ -89,16 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="checkbox" id="parking" name="parking" <?php echo $property['parking'] ? 'checked' : ''; ?>>
             </div>
             <div>
-                <label for="proximity_facilities">Proximity to Facilities:</label>
+                <label for="proximity_facilities">Description:</label>
                 <input type="text" id="proximity_facilities" name="proximity_facilities" value="<?php echo htmlspecialchars($property['proximity_facilities']); ?>" required>
             </div>
             <div>
-                <label for="proximity_roads">Proximity to Roads:</label>
+                <label for="proximity_roads">Features:</label>
                 <input type="text" id="proximity_roads" name="proximity_roads" value="<?php echo htmlspecialchars($property['proximity_roads']); ?>" required>
             </div>
             <div>
-                <label for="image_url">Image URL:</label>
-                <input type="text" id="image_url" name="image_url" value="<?php echo htmlspecialchars($property['image_url']); ?>" required>
+                <label for="property_image">New Property Image:</label>
+                <input type="file" id="property_image" name="property_image" accept="image/*">
+                <p>Current image: <img src="<?php echo htmlspecialchars($property['image_url']); ?>" alt="Property Image" style="width: 100px; height: 100px;"></p>
             </div>
             <div>
                 <button type="submit">Update Property</button>
