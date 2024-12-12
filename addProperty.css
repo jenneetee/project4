@@ -60,7 +60,7 @@ input[type="file"] {
 /* Form field focus effect */
 input:focus, textarea:focus {
     outline: none;
-    border: 1px solid #28a745;
+    border: 1px solid #ac320d;
 }
 
 /* Checkbox styling */
@@ -71,7 +71,7 @@ input[type="checkbox"] {
 
 /* Submit button styling */
 button {
-    background-color: #28a745;
+    background-color: #f5c43e;
     color: white;
     padding: 15px;
     font-size: 1rem;
@@ -84,7 +84,7 @@ button {
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #a88422;
 }
 
 button:focus {

@@ -54,7 +54,8 @@ if (isset($_GET['id'])) {
 
             <!-- Edit and Delete buttons -->
             <div class="buttons">
-                <a href="edit-property.php?id=<?php echo $property['id']; ?>" class="btn edit-btn">Edit Property</a>
+                
+                <button><a href="edit-property.php?id=<?php echo $property['id']; ?>" class="btn edit-btn">Edit Property</a></button>
                 <button onclick="deleteProperty(<?php echo $property['id']; ?>)" class="btn delete-btn">Delete Property</button>
             </div>
         </div>

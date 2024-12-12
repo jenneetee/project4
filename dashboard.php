@@ -2,10 +2,15 @@
 session_start();
 include('db.php');  // Include the database connection
 
-// Assuming the user is logged in and has a user_id in the session
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 $user_id = $_SESSION['user_id'];
 
-// Fetch properties from the database for the logged-in user
+// Fetch properties for the logged-in user
 $query = "SELECT * FROM properties WHERE user_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('i', $user_id);
@@ -23,33 +28,33 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div class="container">
-        <h1>Luxe Listings</h1>
+        <div class="top-bar">
+            <h1>Luxe Listings</h1>
+            <a href="logout.php" class="logout-btn">Log Out</a>
+        </div>
         <h2>My Properties</h2>
         <div id="property-cards" class="property-cards">
-            <!-- Property cards will be displayed here -->
             <?php
-            // Check if there are properties
             if ($result->num_rows > 0) {
                 while ($property = $result->fetch_assoc()) {
-                    // Start a property card for each property
                     echo '<div class="card">';
                     echo '<h3>' . htmlspecialchars($property['location']) . '</h3>';
                     echo '<p>Price: $' . number_format($property['price']) . '</p>';
                     echo '<p>Bedrooms: ' . $property['bedrooms'] . '</p>';
                     echo '<p>Bathrooms: ' . $property['bathrooms'] . '</p>';
                     
-                    // Check if an image exists and display it
                     if (!empty($property['image_url'])) {
-                        $image_url = $property['image_url'];  // Assuming the image URL is relative
-                        echo '<img src="' . $image_url . '" alt="Property Image" style="width:100px; height:auto;">';
+                        echo '<img src="' . htmlspecialchars($property['image_url']) . '" alt="Property Image" style="width:100px; height:auto;">';
                     } else {
                         echo '<p>No image available.</p>';
                     }
 
-                    // View Details, Edit, and Delete buttons
-                    echo '<button onclick="viewProperty(' . $property['id'] . ')">View Details</button>';
-                    echo '<button onclick="editProperty(' . $property['id'] . ')">Edit</button>';
-                    echo '<button onclick="deleteProperty(' . $property['id'] . ')">Delete</button>';
+                    // Buttons: Edit, View Details, Delete
+                    echo '<div class="buttons">';
+                    echo '<a href="property-details.php?id=' . $property['id'] . '" class="btn details-btn">View Details</a>';
+                    echo '<a href="edit-property.php?id=' . $property['id'] . '" class="btn edit-btn">Edit</a>';
+                    echo '<button onclick="deleteProperty(' . $property['id'] . ')" class="btn delete-btn">Delete</button>';
+                    echo '</div>';
                     echo '</div>';
                 }
             } else {
@@ -57,15 +62,32 @@ $result = $stmt->get_result();
             }
             ?>
         </div>
-        <button id="add-property" class="add-property-btn">+</button>
+        <button id="add-property" class="add-property-btn" onclick="window.location.href='add-property.php'">+</button>
     </div>
 
-    <script src="dashboard.js"></script>
+    <script>
+        function deleteProperty(propertyId) {
+            if (confirm('Are you sure you want to delete this property?')) {
+                fetch(`delete_property.php?id=${propertyId}`, {
+                    method: 'GET',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Property deleted successfully');
+                        window.location.reload(); // Reload the page
+                    } else {
+                        alert('Failed to delete property: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Error deleting property:', error));
+            }
+        }
+    </script>
 </body>
 </html>
 
 <?php
-// Close the database connection
 $stmt->close();
 $conn->close();
 ?>
