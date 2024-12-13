@@ -11,7 +11,7 @@
         <h1>Login</h1>
 
         <!-- Login Form -->
-        <form action="login_handler.php" method="POST">
+        <form action="dashboard.php" method="POST">
             <!-- Username Field -->
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Username" required>
