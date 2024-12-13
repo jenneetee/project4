@@ -30,7 +30,7 @@ $result = $stmt->get_result();
     <div class="container">
         <div class="top-bar">
             <h1>Luxe Listings</h1>
-            <a href="logout.php" class="logout-btn">Log Out</a>
+            <a href="login.php" class="login-btn">Log Out</a>
         </div>
         <h2>My Properties</h2>
         <div id="property-cards" class="property-cards">
