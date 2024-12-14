@@ -1,5 +1,5 @@
 <?php
-include 'db_connection.php';
+include 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $first_name = $conn->real_escape_string($_POST['first_name']);
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $billing_address = isset($_POST['billing_address']) ? $conn->real_escape_string($_POST['billing_address']) : null;
     $phone_number = isset($_POST['phone_number']) ? $conn->real_escape_string($_POST['phone_number']) : null;
 
-    $sql = "INSERT INTO users (first_name, last_name, email, username, password, user_type, card_number, card_name, expiration_date, billing_address, phone_number) 
+    $sql = "INSERT INTO users2 (first_name, last_name, email, username, password, user_type, card_number, card_name, expiration_date, billing_address, phone_number) 
             VALUES ('$first_name', '$last_name', '$email', '$username', '$password', '$user_type', '$card_number', '$card_name', '$expiration_date', '$billing_address', '$phone_number')";
 
     if ($conn->query($sql) === TRUE) {
