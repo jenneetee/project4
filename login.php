@@ -11,10 +11,10 @@
         <h1>Login</h1>
 
         <!-- Login Form -->
-        <form action="dashboard.php" method="POST">
-            <!-- Username Field -->
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Username" required>
+        <form action="login_backend.php" method="POST">
+            <!-- Email Field -->
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Email" required>
 
             <!-- Password Field -->
             <label for="password">Password</label>
@@ -25,12 +25,12 @@
         </form>
 
         <!-- Error message if login fails -->
-        <?php if (isset($error_message)): ?>
-            <div class="error"><?= htmlspecialchars($error_message); ?></div>
+        <?php if (isset($_GET['error'])): ?>
+            <div class="error"><?= htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
 
         <!-- Link to Register -->
-        <a href="register.php">Don't have an account? Register here</a>
+        <a href="register.html">Don't have an account? Register here</a>
     </div>
 </body>
 </html>
