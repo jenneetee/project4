@@ -1,37 +1,30 @@
-<!-- register.php -->
 <?php
-include('db.php');
+include 'db_connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $role = $_POST['role'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $first_name = $conn->real_escape_string($_POST['first_name']);
+    $last_name = $conn->real_escape_string($_POST['last_name']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $username = $conn->real_escape_string($_POST['username']);
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $user_type = $conn->real_escape_string($_POST['user_type']);
+    $card_number = isset($_POST['card_number']) ? $conn->real_escape_string($_POST['card_number']) : null;
+    $card_name = isset($_POST['card_name']) ? $conn->real_escape_string($_POST['card_name']) : null;
+    $expiration_date = isset($_POST['expiration_date']) ? $conn->real_escape_string($_POST['expiration_date']) : null;
+    $billing_address = isset($_POST['billing_address']) ? $conn->real_escape_string($_POST['billing_address']) : null;
+    $phone_number = isset($_POST['phone_number']) ? $conn->real_escape_string($_POST['phone_number']) : null;
 
-    // Hash the password
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO users (first_name, last_name, email, username, password, user_type, card_number, card_name, expiration_date, billing_address, phone_number) 
+            VALUES ('$first_name', '$last_name', '$email', '$username', '$password', '$user_type', '$card_number', '$card_name', '$expiration_date', '$billing_address', '$phone_number')";
 
-    // Insert user into database
-    $stmt = $conn->prepare("INSERT INTO users2 (email, password, role) VALUES (?, ?, ?)");
-    $stmt->bind_param('sss', $email, $hashed_password, $role);
-    $stmt->execute();
+    if ($conn->query($sql) === TRUE) {
+        // Redirect to login.php after successful registration
+        header("Location: login.php");
+        exit();
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
 
-    echo "Registration successful! <a href='login.php'>Login here</a>";
+    $conn->close();
 }
 ?>
-
-<form action="register.php" method="POST">
-    <label for="email">Email/Username:</label>
-    <input type="email" id="email" name="email" required>
-    <br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <br>
-    <label for="role">Role:</label>
-    <select name="role" id="role">
-        <option value="buyer">Buyer</option>
-        <option value="seller">Seller</option>
-        <option value="admin">Admin</option>
-    </select>
-    <br>
-    <button type="submit">Register</button>
-</form>
