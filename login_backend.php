@@ -24,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Redirect based on user role
             if ($user['role'] === 'admin') {
-                header('Location: admin_dashboard.php');
+                header('Location: dashboard.php'); //admin dashboard if we did that milestone but for right now it directs to seller dashboard
             } elseif ($user['role'] === 'seller') {
-                header('Location: seller_dashboard.php');
+                header('Location: dashboard.php'); 
             } else {
-                header('Location: buyer_dashboard.php');
+                header('Location: dashboard.php'); //seller dashboard if we did that milestone but for right now it directs to seller dashboard
             }
             exit();
         } else {
